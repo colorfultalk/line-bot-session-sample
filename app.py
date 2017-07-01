@@ -38,7 +38,7 @@ from linebot.models import (
     ImageMessage, VideoMessage, AudioMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
-from botsession import BotSessionInterface
+# from botsession import BotSessionInterface
 
 app = Flask(__name__)
 # botSessionInterface = BotSessionInterface(db='botsession')
