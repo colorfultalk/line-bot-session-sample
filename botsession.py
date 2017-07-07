@@ -18,8 +18,7 @@ class BotSession(CallbackDict, SessionMixin):
 
 class BotSessionInterface(SessionInterface):
 
-    def __init__(self, host='localhost', port=27017,
-                 db='', collection='sessions'):
+    def __init__(self, host='localhost', port=27017, db='', collection='sessions'):
         client = MongoClient(host, port)
         self.store = client[db][collection]
         print(self.store)

@@ -38,10 +38,10 @@ from linebot.models import (
     ImageMessage, VideoMessage, AudioMessage,
     UnfollowEvent, FollowEvent, JoinEvent, LeaveEvent, BeaconEvent
 )
-# from botsession import BotSessionInterface
+from botsession import BotSessionInterface
 
 app = Flask(__name__)
-# botSessionInterface = BotSessionInterface(db='botsession')
+botSessionInterface = BotSessionInterface(db='botsession')
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
@@ -82,32 +82,34 @@ def callback():
 
     # handle webhook body
     try:
+        events = parser.parse(body, signature)
+        user_id = events.pop().source.user_id
+        g.user_id = user_id
+        session = botSessionInterface.open_session(app, request)
+        g.session = session
+        print("callback")
+        print(session.user_id)
         handler.handle(body, signature)
-        # events = parser.parse(body, signature)
-        # user_id = events.pop().source.user_id
-        # g.user_id = user_id
-        # session = botSessionInterface.open_session(app, request)
-        # g.session = session
-        # print(session.user_id)
     except InvalidSignatureError:
         abort(400)
 
     return 'OK'
 
-# @app.after_request
-# def after_request(response):
-#     session = getattr(g, 'session', None)
-#     print(session)
-#     botSessionInterface.save_session(app, session, response)
-#
-#     return response
+@app.after_request
+def after_request(response):
+    session = getattr(g, 'session', None)
+    print("after_request")
+    print(session)
+    botSessionInterface.save_session(app, session, response)
+
+    return response
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
     text = event.message.text
-    # session = getattr(g, 'session', None)
-    # if session['status']:
-    #     print(session['status'])
+    session = getattr(g, 'session', None)
+    print("handle")
+    print(session)
 
     if text == 'profile':
         if isinstance(event.source, SourceUser):
@@ -181,7 +183,7 @@ def handle_text_message(event):
     elif text == 'imagemap':
         pass
     else:
-        # session['status'] = event.message.text
+        session['status'] = event.message.text
         line_bot_api.reply_message(
             event.reply_token, TextSendMessage(text=event.message.text))
 
