@@ -41,7 +41,7 @@ from linebot.models import (
 from botsession import BotSessionInterface
 
 app = Flask(__name__)
-botSessionInterface = BotSessionInterface(db='botsession')
+botSessionInterface = BotSessionInterface()
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
@@ -87,8 +87,6 @@ def callback():
         g.user_id = user_id
         session = botSessionInterface.open_session(app, request)
         g.session = session
-        print("callback")
-        print(session.user_id)
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
