@@ -23,7 +23,7 @@ $ python app.py
 ## How to use
 
 botSessionInterfaceをインスタンス化
-```
+```python
 from botsession import BotSessionInterface
 botSessionInterface = BotSessionInterface()
 ```
@@ -31,7 +31,7 @@ botSessionInterface = BotSessionInterface()
 session moduleがlineのuser_idを参照できるようにするために，flask.gに格納する
 `open_session` でセッションを復帰/新規作成する(戻り値はsession object)
 
-```
+```python
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -62,12 +62,12 @@ def callback():
 
 セッションに持たせたい情報はdictionaryで格納できる．
 
-```
+```python
 session['status'] = event.message.text
 ```
 
 リクエスト処理の後にセッションを保存しておくと，次のリクエスト時にlineの`user_id`をキーとして保存したセッションを復帰させることができる．
-```
+```python
 @app.after_request
 def after_request(response):
     session = getattr(g, 'session', None)
