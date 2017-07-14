@@ -25,16 +25,14 @@ class BotSessionInterface(SessionInterface):
                 stored_session = Session.select().where(Session.user == user_id).get()
                 if stored_session.expiration > datetime.utcnow():
                     return BotSession(initial=stored_session.data, user_id=stored_session.user)
+                else:
+                    return BotSession(user_id = user_id)
             except Session.DoesNotExist:
                 return BotSession(user_id = user_id)
         # user_idがNoneの場合の処理を書く必要があるかも
 
     def save_session(self, app, session, response):
-        if self.get_expiration_time(app, session):
-            expiration = self.get_expiration_time(app, session)
-        else:
-            expiration = datetime.utcnow() + timedelta(hours=1)
-
+        expiration = datetime.utcnow() + timedelta(hours=1)
         try:
             stored_session = Session.select().where(Session.user == session.user_id).get()
             stored_session.data = session
